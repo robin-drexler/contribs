@@ -20,7 +20,6 @@ node_modules/async-minihelper
 node_modules/wd
 
 
-public/css/*
 test/bin/selenium-server-standalone*.jar
 
 .elasticbeanstalk/
