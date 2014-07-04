@@ -1,6 +1,6 @@
 var config = {
   siteName: 'Contribs and Interests'
-, eventName: 'JS Unconf 2014'
+, eventName: 'PHP Unconf 2014'
 , domain: 'http://contribs.jsunconf.eu'
 , flash: {
     defaultClass: 'alert'
