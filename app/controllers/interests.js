@@ -18,7 +18,7 @@ var Interests = function () {
   this.add = function (req, resp, params) {
     var config = geddy.config
       , recaptcha = new Recaptcha(config.recaptcha.publicKey, config.recaptcha.privateKey);
-    this.respond({ recaptcha: recaptcha.toHTML() });
+    this.respond({ recaptcha: recaptcha.toHTML(), interest: params });
   };
 
   this.create = function (req, resp, params) {
@@ -33,17 +33,15 @@ var Interests = function () {
     });
 
     recaptcha.verify(function (success, err) {
-      if (success || !geddy.config.recaptcha.enabled) {
+      if (success || !geddy.config.recaptcha.enabled && interest.isValid()) {
         interest.save(function (er, data) {
           var success = 'Created Interest! Thank you so much!';
           self.respondWith(interest, {status: er || success});
         });
       } else {
-        self.flash.error('Wrong Captcha');
-        var r = {
-          recaptcha: recaptcha.toHTML(),
-        };
-        self.redirect(geddy.viewHelpers.addInterestPath);
+        interest.errors = interest.errors || [];
+        interest.errors.captcha = "Wrong Captcha";
+        self.respondWith(interest);
       }
     });
   };

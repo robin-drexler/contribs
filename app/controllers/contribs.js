@@ -23,12 +23,13 @@ var Contribs = function () {
       , Interest = geddy.model.Interest
       , interest;
 
+
     if (params.interest_id) {
       Interest.first(params.interest_id, function (err, interest) {
-        self.respond({ recaptcha: recaptcha.toHTML(), interest: interest });
+        self.respond({ recaptcha: recaptcha.toHTML(), interest: interest, contrib: params});
       });
     } else {
-      self.respond({ recaptcha: recaptcha.toHTML(), interest: interest });
+      self.respond({ recaptcha: recaptcha.toHTML(), interest: interest, contrib: params });
     }
   };
 
@@ -43,19 +44,18 @@ var Contribs = function () {
       response: params.recaptcha_response_field
     });
 
+    
     recaptcha.verify(function (success, err) {
-      if (success || !geddy.config.recaptcha.enabled) {
+      if (success || !geddy.config.recaptcha.enabled && contrib.isValid()) {
         contrib.save(function (er, data) {
           var success = 'Created Contribution! Thank you so much!';
           self.session.set(getCreatedKey(contrib.id), 'c');
           self.redirect(geddy.viewHelpers.contribPath(contrib.id));
         });
       } else {
-        self.flash.error('Wrong Captcha');
-        var r = {
-          recaptcha: recaptcha.toHTML(),
-        };
-        self.redirect(geddy.viewHelpers.addContribPath);
+        contrib.errors = contrib.errors || [];
+        contrib.errors.captcha = "Wrong Captcha";
+        self.respondWith(contrib);
       }
     });
   };

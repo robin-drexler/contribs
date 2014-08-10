@@ -15,7 +15,7 @@
     </div>
     <% } %>
 
-    <%- partial('form', {contrib: {}, recaptcha: recaptcha}) %>
+    <%- partial('form', {contrib: contrib, recaptcha: recaptcha}) %>
     <% if (interest && interest.id) { %>
     <input type="hidden" name="interest_id" value="<%= interest.id %>" />
     <% } %>
